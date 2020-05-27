@@ -140,7 +140,7 @@ class Board:
 
         return True
 
-    # changes ---------------------------- DONE !!!!
+    # -----------------------------------------------
 
     def player_position(self):
         return self.actor_pos
@@ -163,7 +163,7 @@ class Board:
         return dict(left=self.board[position[0]][position[1] - 1], up=self.board[position[0] - 1][position[1]],
                     right=self.board[position[0]][position[1] + 1], down=self.board[position[0] + 1][position[1]])
 
-    # -----------------------------------
+    # ---------------------------------------------
 
 
 class BacktrackingAgent:
@@ -191,19 +191,19 @@ class BacktrackingAgent:
         backtracking. The 'mode' variable determines whether the agent
         currently explores forward or backtracks.
         """
-        # jezeli gdzis obok na planszy jest W albo B albo E to sie wyświetlni przy inicjowaniu planszy ---- DONE!!!
+        # -------------------------------------
         r, c = np.asarray(init_board.board).shape
         empty_board = [['W' if i in [0, c - 1] or j in [0, r - 1] else ' ' for i in range(c)] for j in range(r)]
         empty_board[self.begin_position[0]][self.begin_position[1]] = 'B'
         empty_board[self.exit_position[0]][self.exit_position[1]] = 'E'
-        # -----------
+        # --------------------------------------
 
         self.board = Board(empty_board)
         self.visited = [['' for c in r] for r in init_board.board]
         self.state_stack = []
         self.mode = 'forward'
 
-        # Pokazuje tylko to co jest w kazdym kierunku i wyswietla na planszy
+        # -------------------------
         init_surroudings = init_board.around_player(self.actor_position)
         self.update_surroundings(init_surroudings)
         # -------------------------
@@ -215,7 +215,6 @@ class BacktrackingAgent:
         pam = self.board.position_after_move(move)
         vb = self.visited[pam[0]][pam[1]]
         return self.board.passable not in vb
-
 
     def move(self, env):
         """
@@ -271,7 +270,7 @@ class BacktrackingAgent:
 
                 return btr_possible_moves[0]
 
-    # changes ----------------------------------
+    # -----------------------------------------
 
     def choose_move(self, possible_moves):
         distances = list()
@@ -294,11 +293,13 @@ class BacktrackingAgent:
         elif move == 'move right':
             position_after_move = tuple((position_after_move[0], position_after_move[1]+1))
         elif move == 'switch':
-            position_after_move = tuple((1000, 1000))
+            position_after_move = tuple((1996, 1996))
         return position_after_move
 
-    def calculate_distance(self, first_position, second_position):
-        return abs(first_position[0] - second_position[0]) + abs(first_position[1] - second_position[1])
+    def calculate_distance(self, x, y):
+        distance = np.sqrt(np.square(y[0] - x[0]) + np.square(y[1] - x[1]))
+        print("Your distance to exit is: ", distance)
+        return distance
 
     def update_position(self, actor_position):
         self.actor_position = actor_position
@@ -392,10 +393,18 @@ board2 = Board([['W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'],
                 ['W', 'B', ' ', ' ', 'S', ' ', 'W', ' ', 'W', 'W'],
                 ['W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W']])
 
+board3 = Board([['W', 'W', 'W', 'W', 'W'],
+                ['W', ' ', ' ', 'E', 'W'],
+                ['W', ' ', 'W', 'W', 'W'],
+                ['W', ' ', ' ', 'W', 'W'],
+                ['W', 'W', ' ', 'W', 'W'],
+                ['W', 'B', ' ', 'W', 'W'],
+                ['W', 'W', 'W', 'W', 'W']])
+
 
 # starting a game when the script runs
 if __name__ == "__main__":
-    env = Environment(board2, BacktrackingAgent(board2))
+    env = Environment(board3, BacktrackingAgent(board3))
     try:
         env.play_game(wait_after_step=True)
     except Exception as e:
